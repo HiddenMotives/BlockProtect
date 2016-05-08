@@ -11,11 +11,11 @@ Nukkit Plugin: Protect yourself from griefers by placing a protection block!
 - Visualize protection radius 
 
 ### Usage
-Place a protection block (default lapis lazuli blocK) and volla !
+Place a protection block (default lapis lazuli block) and volla !
 The radius (default 10 blocks) will be protected around your protection block.
 
 ### Installation 
-Put BlockProtect.jar in the plugins directory on your Nukkit Server
+Put [BlockProtect.jar](https://github.com/basprohop/BlockProtect/releases) in the plugins directory on your Nukkit Server
 
 ### Want to contribute?
 Here are some features and expansions that can be added

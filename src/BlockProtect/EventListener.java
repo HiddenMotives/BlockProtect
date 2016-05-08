@@ -126,7 +126,11 @@ public class EventListener implements Listener {
         }
     }
     
-    
+    /**
+     * Get the number of total player protections
+     * @param player = Player
+     * @return int - num protections
+     */
     public int getNumPlayerProtections(Player player) {
         List list;
         try {
@@ -138,12 +142,23 @@ public class EventListener implements Listener {
         }
     }
 
+    /**
+     * Place a protection block
+     * @param loc
+     * @param player 
+     */
     public void playerPlaceProtection(Location loc, Player player) {
         List list = (List) plugin.map.get(player.getName());
         list.add(new Areas(loc));
         plugin.map.put(player.getName(), list);
     }
 
+    /**
+     * Verify and remove the protection block the player is trying to remove.
+     * @param loc - Location of the Protection Block
+     * @param player - Player attempting to remove
+     * @return bool
+     */
     public boolean playerRemoveProtection(Location loc, Player player) {
         Set set = plugin.map.entrySet();
         Iterator i = set.iterator();
@@ -164,6 +179,13 @@ public class EventListener implements Listener {
         return false;
     }
 
+    /**
+     * Same as block method blockInProtection but determines by boolean value
+     * if player can build or not.
+     * @param loc - Location being compared to.
+     * @param player - Player trying to access
+     * @return bool
+     */
     public boolean playerInRangeProtection(Location loc, Player player) {
         Set set = plugin.map.entrySet();
         Iterator i = set.iterator();
@@ -187,6 +209,12 @@ public class EventListener implements Listener {
         return false;
     }
     
+    /**
+     * Check if a block is protected by a protection block based on a given
+     * location
+     * @param loc - Location being compared to.
+     * @return bool
+     */
     public boolean blockInProtection(Location loc) {
         Set set = plugin.map.entrySet();
         Iterator i = set.iterator();
@@ -205,7 +233,11 @@ public class EventListener implements Listener {
         return false;
         
     }
-    
+    /**
+     * Grabs the outer blocks for the protected area forming a circle
+     * @param loc - Location of the protected block
+     * @return list - List of outer blocks in the circle
+     */
     public List ProtectionArea(Location loc) {
         List<Location> list = new ArrayList<>();
         
@@ -222,6 +254,14 @@ public class EventListener implements Listener {
         
         return list;
     }
+    
+    /**
+     * Makes a glass circle around the protected block of the radius
+     * specified in the config.yml
+     * 
+     * @param list - The list of outer blocks in the circle
+     * @param level - The level the block is in.
+     */
     public void makeCircle(List list, Level level) {
         Block block = Block.get(20);
         
@@ -235,6 +275,11 @@ public class EventListener implements Listener {
         }
     }
     
+    /**
+     * Removes the glass circle made around the protected block
+     * @param list - The list of outer blocks in the circle
+     * @param level - The level the block is in.
+     */
     public void removeCircle(List list, Level level) {
         Block block = Block.get(0);
         

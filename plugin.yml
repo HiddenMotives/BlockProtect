@@ -1,0 +1,5 @@
+name: BlockProtect
+main: BlockProtect.BlockProtect
+version: "1.0.0"
+api: ["1.0.0"]
+description: Protect yourself from griefers by placing a protection block!

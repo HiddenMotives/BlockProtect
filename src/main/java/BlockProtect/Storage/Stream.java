@@ -39,12 +39,12 @@ public class Stream {
     
     public void save() {
         try {
-            plugin.getLogger().info("Saving Block Protect data...");
+//            plugin.getLogger().info("Saving Block Protect data...");
             FileOutputStream fos = new FileOutputStream(plugin.getDataFolder() + File.separator + dataFile);
             ObjectOutputStream oos = new ObjectOutputStream(fos);
             oos.writeObject(plugin.map);
             oos.close();
-            plugin.getLogger().info("Block Protect data has been saved!");
+//            plugin.getLogger().info("Block Protect data has been saved!");
         } catch (IOException e) {
             plugin.getLogger().critical("Unable to save Block Protect data: " + e.getMessage());
         }

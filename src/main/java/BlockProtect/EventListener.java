@@ -19,19 +19,19 @@ import java.util.Map;
 import java.util.Set;
 
 public class EventListener implements Listener {
-    
+
     private int radius;
     private int maximumprotections;
     private int protectionblock;
     private BlockProtect plugin;
 
-    public EventListener(BlockProtect plugin) { 
+    public EventListener(BlockProtect plugin) {
         this.plugin = plugin;
         this.radius = plugin.config.getInt("protection-radius");
         this.maximumprotections = plugin.config.getInt("maxium-protections");
         this.protectionblock = plugin.config.getInt("protection-blockid");
     }
-    
+
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = false)
     public void onExplode(EntityExplodeEvent event) {
         List list = event.getBlockList();
@@ -41,23 +41,23 @@ public class EventListener implements Listener {
             if(blockInProtection(block.getLocation())) {
                 event.setCancelled(true);
             }
-            
+
         }
     }
-    
+
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = false)
     public void onInteract(PlayerInteractEvent event) {
         Player player = event.getPlayer();
         Block block = event.getBlock();
-        
+
         if (playerInRangeProtection(block.getLocation(), player)) {
             player.sendMessage(plugin.msg("You can't use: " + block.getName() + " in this area."));
             event.setCancelled(true);
         }
-        
-        
+
+
     }
-    
+
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = false)
     public void onBlockBreak(BlockBreakEvent event) {
         Player player = event.getPlayer();
@@ -65,13 +65,13 @@ public class EventListener implements Listener {
 
         if (block.getId() == protectionblock) {
             if(playerRemoveProtection(block.getLocation(), player)) {
-                removeCircle(ProtectionArea(block.getLocation()), block.getLevel());
+//                removeCircle(ProtectionArea(block.getLocation()), block.getLevel());
                 player.sendMessage(plugin.msg("You have broken your protection block!"));
             } else {
                 if (playerInRangeProtection(block.getLocation(), player)) {
                     player.sendMessage(plugin.msg("You can't break that protection block!"));
                     event.setCancelled(true);
-                }  
+                }
             }
         } else if (playerInRangeProtection(block.getLocation(), player)) {
             event.setCancelled(true);
@@ -82,7 +82,7 @@ public class EventListener implements Listener {
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = false)
     public void onBlockPlace(BlockPlaceEvent event) {
         Player player = event.getPlayer();
-        Block block = event.getBlock(); 
+        Block block = event.getBlock();
 
         if (block.getId() == protectionblock) {
             int numPlayerProtections = getNumPlayerProtections(player);
@@ -94,7 +94,7 @@ public class EventListener implements Listener {
                 if (playerInRangeProtection(block.getLocation(), player)) {
                     event.setCancelled(true);
                 } else {
-                    
+
                     List protectionarea = ProtectionArea(block.getLocation());
                     boolean isProtected = false;
                     for (Iterator<Location> i = protectionarea.iterator(); i.hasNext();) {
@@ -103,21 +103,21 @@ public class EventListener implements Listener {
                             break;
                         }
                     }
-                    
+
                     if(isProtected) {
                         player.sendMessage(plugin.msg("Your protection overlaps "
                                 + "another protected area, move away further."));
                         event.setCancelled(true);
-                    } else {                        
+                    } else {
                         int remaining = ((maximumprotections - numPlayerProtections)-1);
                         playerPlaceProtection(block.getLocation(), player);
-                        makeCircle(protectionarea, block.getLevel());
+//                        makeCircle(protectionarea, block.getLevel());
                         player.sendMessage(plugin.msg("You have placed a protection block!"));
-                        player.sendMessage(plugin.msg("You have " + remaining 
+                        player.sendMessage(plugin.msg("You have " + remaining
                                 + " protection areas remaining."));
-                        player.sendMessage(plugin.msg("A protection radius of " 
+                        player.sendMessage(plugin.msg("A protection radius of "
                                 + radius + " blocks has been created around your protection block"));
-                        player.sendPopup(plugin.msg("The area inside the glass circle is protected."));
+//                        player.sendPopup(plugin.msg("The area inside the glass circle is protected."));
                     }
                 }
             }
@@ -125,7 +125,7 @@ public class EventListener implements Listener {
             event.setCancelled(true);
         }
     }
-    
+
     /**
      * Get the number of total player protections
      * @param player = Player
@@ -145,7 +145,7 @@ public class EventListener implements Listener {
     /**
      * Place a protection block
      * @param loc
-     * @param player 
+     * @param player
      */
     public void playerPlaceProtection(Location loc, Player player) {
         List list = (List) plugin.map.get(player.getName());
@@ -208,7 +208,7 @@ public class EventListener implements Listener {
         }
         return false;
     }
-    
+
     /**
      * Check if a block is protected by a protection block based on a given
      * location
@@ -218,7 +218,7 @@ public class EventListener implements Listener {
     public boolean blockInProtection(Location loc) {
         Set set = plugin.map.entrySet();
         Iterator i = set.iterator();
-        
+
         while (i.hasNext()) {
             Map.Entry me = (Map.Entry) i.next();
             List list = (List) me.getValue();
@@ -231,7 +231,7 @@ public class EventListener implements Listener {
             }
         }
         return false;
-        
+
     }
     /**
      * Grabs the outer blocks for the protected area forming a circle
@@ -240,41 +240,41 @@ public class EventListener implements Listener {
      */
     public List ProtectionArea(Location loc) {
         List<Location> list = new ArrayList<>();
-        
+
         double x;
         double y = loc.y;
         double z;
-        
+
         for (double i = 0.0; i < 360.0; i += 0.1) {
         double angle = i * Math.PI / 180;
             x = (loc.getX() + radius * Math.cos(angle));
             z = (loc.getZ() + radius * Math.sin(angle));
             list.add(new Location(x,y,z));
         }
-        
+
         return list;
     }
-    
+
     /**
      * Makes a glass circle around the protected block of the radius
      * specified in the config.yml
-     * 
+     *
      * @param list - The list of outer blocks in the circle
      * @param level - The level the block is in.
      */
     public void makeCircle(List list, Level level) {
         Block block = Block.get(20);
-        
+
         for (Iterator<Location> i = list.iterator(); i.hasNext();) {
             Location loc = i.next();
             Block current = level.getBlock(loc);
-            
+
             if(current.getId() == 0) {
-                level.setBlock(loc, block);
+//                level.setBlock(loc, block);
             }
         }
     }
-    
+
     /**
      * Removes the glass circle made around the protected block
      * @param list - The list of outer blocks in the circle
@@ -282,15 +282,15 @@ public class EventListener implements Listener {
      */
     public void removeCircle(List list, Level level) {
         Block block = Block.get(0);
-        
+
         for (Iterator<Location> i = list.iterator(); i.hasNext();) {
             Location loc = i.next();
             Block current = level.getBlock(loc);
-            
+
             if(current.getId() == 20) {
-                level.setBlock(loc, block);
+//                level.setBlock(loc, block);
             }
         }
     }
-    
+
 }
